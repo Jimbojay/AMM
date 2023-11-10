@@ -25,12 +25,21 @@ function App() {
 
     const chainId = await loadNetwork(provider, dispatch)
 
-    //Fetch accounts
-    await loadAccount(dispatch)
+    // Reload page when network changes
+    window.ethereum.on('chainChanged', async () => {
+      window.location.reload()
+    })
 
+    // Fetch current account from Metamask when changed
+    window.ethereum.on('accountsChanged', async () => {
+      await loadAccount(dispatch)
+    })
+
+    
     // Initiate contracts
     await loadTokens(provider, chainId, dispatch)
     await loadAMM(provider, chainId, dispatch)
+    console.log(`test`)
   }
 
   useEffect(() => {
@@ -39,7 +48,7 @@ function App() {
 
   return(
     <Container>
-      <Navigation account={'0x0...'} />
+      <Navigation />
 
       <h1 className='my-4 text-center'>React Hardhat Template</h1>
 

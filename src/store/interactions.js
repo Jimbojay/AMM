@@ -13,7 +13,8 @@ import {
 } from './reducers/tokens'
 
 import {
-	setContract
+	setContract,
+	sharesLoaded
 } from './reducers/amm'
 
 
@@ -64,6 +65,9 @@ export const loadTokens = async (provider, chainId, dispatch) => {
 	dispatch(setContracts([dapp, usd]))
 	dispatch(setSymbols([await dapp.symbol(), await usd.symbol()]))
 
+	// const tokens = [dapp, usd];
+	// return tokens;
+
 }
 
 export const loadAMM = async (provider, chainId, dispatch) => {
@@ -78,12 +82,16 @@ export const loadAMM = async (provider, chainId, dispatch) => {
 //////////
 // Load balances & shares
 //////////
-export const loadBalances = async (tokens, account, dispatch) => {
+export const loadBalances = async (amm, tokens, account, dispatch) => {
 	const balance1 = await tokens[0].balanceOf(account)
 	const balance2 = await tokens[1].balanceOf(account)
+	
+	dispatch(balancesLoaded([
+		ethers.utils.formatUnits(balance1.toString(), 'ether'),
+		ethers.utils.formatUnits(balance2.toString(), 'ether')
+	]))
 
-	dispatch(balancesLoaded(
-		balance1,
-		balance2
-	))
+	const shares = await amm.shares(account)
+	dispatch(sharesLoaded(ethers.utils.formatUnits(shares.toString(), 'ether')))
+
 }
