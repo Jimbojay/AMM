@@ -15,6 +15,7 @@ import {
 import {
 	setContract,
 	sharesLoaded,
+	swapsLoaded,
 	depositRequest,
 	depositSuccess,
 	depositFail,
@@ -171,7 +172,7 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
 		if (symbol === "DAPP") {
 			transaction = await amm.connect(signer).swapToken1(amount)
 		} else {
-			transaction = await amm.connect(signer).swapToken3(amount)
+			transaction = await amm.connect(signer).swapToken2(amount)
 		}
 
 		await transaction.wait()
@@ -182,5 +183,22 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
 	} catch (error) {
 		dispatch(swapFail())	
 	} 
+
+}
+
+/////////////
+// Swap
+/////////////
+
+export const loadAllSwaps = async (provider, amm, dispatch) => {
+
+	const block = await provider.getBlockNumber()
+
+	const swapStream = await amm.queryFilter('Swap', 0, block)
+	const swaps = swapStream.map(event => {
+		return{ hash: event.transactionHash, args: event.args}
+	})
+
+	dispatch(swapsLoaded(swaps))
 
 }

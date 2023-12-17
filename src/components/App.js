@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
-import { ethers } from 'ethers'
 
 // Components
 import Navigation from './Navigation';
@@ -44,12 +43,12 @@ function App() {
     // Initiate contracts
     await loadTokens(provider, chainId, dispatch)
     await loadAMM(provider, chainId, dispatch)
-    console.log(`test`)
+    // console.log(`test`)
   }
 
   useEffect(() => {
       loadBlockchainData()
-  }, []);
+  }, [loadBlockchainData]);
 
   return(
     <Container>
